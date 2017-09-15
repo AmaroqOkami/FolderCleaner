@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualBasic.FileIO;
 using System.Linq;
 using System.Windows.Forms;
 using System.ComponentModel;
+using Microsoft.VisualBasic.FileIO;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.WindowsAPICodePack.Taskbar;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FolderCleaner
 {
@@ -20,6 +23,7 @@ namespace FolderCleaner
 
         private bool selectEnabling = false;
 
+        private byte threadCount = (byte)(Environment.ProcessorCount - 1);
         private bool programInitializing = true;
 
         public MainWindow()
@@ -108,6 +112,8 @@ namespace FolderCleaner
                 workProgressMessage = "";
                 workProgressValue = 0;
 
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
+
                 fileDiscoveryThread.RunWorkerAsync();
             }
             else
@@ -151,6 +157,7 @@ namespace FolderCleaner
         {
             statusMessage.Text = workProgressMessage;
             progressBar.Value = workProgressValue;
+            TaskbarManager.Instance.SetProgressValue(workProgressValue, progressBar.Maximum);
         }
 
         private void fileDiscoveryThread_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -169,8 +176,9 @@ namespace FolderCleaner
                 selectAllButton.Enabled = true;
                 unselectAllButton.Enabled = true;
 
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
                 statusMessage.Text = itemList.Items.Count + " files found.";
-                progressBar.Value = 0;
+                //progressBar.Value = 0;
             }
         }
 
@@ -201,6 +209,8 @@ namespace FolderCleaner
                     workProgressMessage = "";
 
                     progressBar.Maximum = itemList.CheckedItems.Count;
+                    TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
+
                     fileDeletionThread.RunWorkerAsync();
                 }
             }
@@ -213,7 +223,8 @@ namespace FolderCleaner
         private void fileDeletionThread_DoWork(object sender, DoWorkEventArgs e)
         {
             int deleteCount = 0;
-
+            Task[] workers = new Task[threadCount];
+            
             foreach (ListViewItem item in itemList.CheckedItems)
             {
                 if (Program.fileList.TryGetValue(item.SubItems[0].Text, out string filePath))
@@ -254,6 +265,8 @@ namespace FolderCleaner
                 if (itemList.Items.Count == 0)
                     itemList.Enabled = false;
 
+                TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+
                 statusMessage.Text = (int)(e.Result) + " files removed.";
                 deleteSelectedButton.Enabled = true;
                 refreshFilesButton.Enabled = true;
@@ -264,6 +277,7 @@ namespace FolderCleaner
         {
             statusMessage.Text = workProgressMessage;
             progressBar.Value = workProgressValue;
+            TaskbarManager.Instance.SetProgressValue(workProgressValue, progressBar.Maximum);
         }
 
 
