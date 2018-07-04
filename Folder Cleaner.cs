@@ -31,6 +31,7 @@ namespace FolderCleaner
             InitializeComponent();
 
             this.SizeChanged += new EventHandler(itemList_Resize);
+            this.FormClosing += new FormClosingEventHandler(MainWindow_Closing);
             this.itemList.DoubleBuffer();
 
             if (DLC_Options.Instance.maxFileSize >= maxFileSizeEntry.Maximum * 1000000)
@@ -46,7 +47,18 @@ namespace FolderCleaner
             this.fileDiscoveryDialog.IsFolderPicker = true;
             this.fileDiscoveryDialog.InitialDirectory = DLC_Options.Instance.folderPath;
 
+            this.Left = DLC_Options.Instance.winPosX;
+            this.Top = DLC_Options.Instance.winPosY;
+
             programInitializing = false;
+        }
+
+
+        private void MainWindow_Closing(object sender, FormClosingEventArgs e)
+        {
+            DLC_Options.Instance.winPosX = this.Left;
+            DLC_Options.Instance.winPosY = this.Top;
+            DLC_Options.Instance.Save();
         }
 
         private void minFileSizeEntry_ValueChanged(object sender, EventArgs e)

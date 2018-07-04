@@ -290,9 +290,9 @@
             this.Controls.Add(this.deleteSelectedButton);
             this.Controls.Add(this.refreshFilesButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(586, 305);
+            this.MinimumSize = new System.Drawing.Size(586, 374);
             this.Name = "MainWindow";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Folder Cleaner";
             ((System.ComponentModel.ISupportInitialize)(this.minFileSizeEntry)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxFileSizeEntry)).EndInit();

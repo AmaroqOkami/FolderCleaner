@@ -26,16 +26,16 @@ namespace FolderCleaner
         public long minFileSize;
         public long maxFileSize;
         public string folderPath;
-        //public int winPosX;
-        //public int winPosY;
+        public int winPosX;
+        public int winPosY;
 
         public DLC_Options()
         {
             minFileSize = 1048576;
             maxFileSize = long.MaxValue;
             folderPath = Program.dlFilePath;
-            //winPosX = 500;
-            //winPosY = 500;
+            winPosX = 500;
+            winPosY = 500;
     }
 
 
